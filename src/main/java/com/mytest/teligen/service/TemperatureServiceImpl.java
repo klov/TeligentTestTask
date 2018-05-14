@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mytest.teligen.entity.CityTemperature;
 import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.net.URLEncoder;
-import org.springframework.stereotype.Service;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
 import org.springframework.beans.factory.annotation.Autowired;
-import javax.ws.rs.ClientErrorException;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by vita on 12.05.2018.
@@ -23,20 +20,23 @@ public class TemperatureServiceImpl {
     @Autowired
     Environment enviroment;
     
+    @Autowired
+    private RestTemplate restTemplate;
+    
+    @Autowired
+    private ObjectMapper mapper;
+    
  
     public CityTemperature get(String city, String country) throws Exception {
-        HttpClient httpClient = new HttpClient();
-        httpClient.start();
-           String url = "http://api.worldweatheronline.com/premium/v1/weather.ashx?key=9b7ed6bf5c3d4350871121003181205&"
-                +"q="+URLEncoder.encode(city, "utf-8")+","
-                +URLEncoder.encode(country,"utf-8")+"&num_of_days=3" 
-                +"&tp=24&format=json";
-        ContentResponse response  = httpClient.GET(url);
-        if(response.getStatus()>=300){
-           throw new ClientErrorException(response.getStatus()) ;
+        String key = enviroment.getProperty("worldweather.key");
+        if(key==null||key.isEmpty()){
+            key = "9b7ed6bf5c3d4350871121003181205";
         }
-        String jsonAnswer = response.getContentAsString();
-        ObjectMapper mapper = new ObjectMapper();
+        String url = "http://api.worldweatheronline.com/premium/v1/weather.ashx?key="
+                + key + "&q="+URLEncoder.encode(city, "utf-8")+","+
+                URLEncoder.encode(country,"utf-8")+"&num_of_days=3"+ 
+                "&tp=24&format=json";
+        String jsonAnswer  = restTemplate.getForObject(url, String.class);
         CityTemperature cityTemperature  =  new CityTemperature();
         JsonNode  root = mapper.readTree(jsonAnswer);
         JsonNode dataNode = root.get("data");
@@ -49,7 +49,6 @@ public class TemperatureServiceImpl {
             minimalTemp = (temp<minimalTemp)?temp:minimalTemp;
         }
         cityTemperature.setMinTemperature(minimalTemp);
-        httpClient.stop();
         return cityTemperature;
     }
 
@@ -59,6 +58,22 @@ public class TemperatureServiceImpl {
 
     public void setEnviroment(Environment enviroment) {
         this.enviroment = enviroment;
+    }
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
+
+    public void setMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
     
 }

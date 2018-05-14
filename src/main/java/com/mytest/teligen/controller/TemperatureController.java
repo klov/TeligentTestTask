@@ -21,34 +21,32 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(path = TEMPERATURE_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class TemperatureController {
 
-    public static final String TEMPERATURE_PATH ="/temperature";
+    public static final String TEMPERATURE_PATH = "/temperature";
 
-
+    @Autowired
     private TemperatureServiceImpl temperatureService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public CityTemperature getTemperature(@RequestParam("city") String city, @RequestParam("country") String country ) throws Exception {     
-      CityTemperature temperature = temperatureService.get(city,country);
-      return temperature;
+    public CityTemperature getTemperature(@RequestParam("city") String city, @RequestParam("country") String country) throws Exception {
+        CityTemperature temperature = temperatureService.get(city, country);
+        return temperature;
     }
-    
-   @ExceptionHandler(Exception.class)
-   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ModelAndView handleError(HttpServletRequest req, Exception ex) {
-    Logger.getLogger(TemperatureController.class.getName()).log(Level.SEVERE, null, ex);
-    ModelAndView mav = new ModelAndView();
-    return mav;
-  }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handleError(HttpServletRequest req, Exception ex) {
+        Logger.getLogger(TemperatureController.class.getName()).log(Level.SEVERE, null, ex);
+        ModelAndView mav = new ModelAndView();
+        return mav;
+    }
 
     public TemperatureServiceImpl getTemperatureService() {
         return temperatureService;
     }
 
-    @Autowired
+    
     public void setTemperatureService(TemperatureServiceImpl temperatureService) {
         this.temperatureService = temperatureService;
     }
 
-
 }
-

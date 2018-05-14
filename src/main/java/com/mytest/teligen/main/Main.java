@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @EnableAutoConfiguration
+@ComponentScan(basePackages = "com.mytest")
 @SpringBootApplication
-@ComponentScan(basePackages = "com.mytest.teligen")
 public class Main {
 
     public static void main(String[] args){
