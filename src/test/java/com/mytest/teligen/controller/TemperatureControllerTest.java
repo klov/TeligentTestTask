@@ -1,0 +1,50 @@
+package com.mytest.teligen.controller;
+
+import static com.mytest.teligen.controller.TemperatureController.TEMPERATURE_PATH;
+import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
+import static org.junit.Assert.*;
+
+import com.mytest.teligen.controller.config.TemperatureControllerTestConfig;
+import com.mytest.teligen.entity.CityTemperature;
+import com.mytest.teligen.service.TemperatureServiceImpl;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import org.junit.runner.RunWith;
+import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+/**
+ * Created by vita on 13.05.2018.
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {TemperatureController.class, TemperatureControllerTestConfig.class})
+@AutoConfigureMockMvc(secure = false)
+@EnableWebMvc
+public class TemperatureControllerTest  {
+
+    @Autowired
+    private MockMvc mvc;
+
+    @Autowired
+    private TemperatureServiceImpl service;
+
+    @org.junit.Test
+    public void getTemperature() throws Exception {
+        CityTemperature temperature = new CityTemperature();
+        temperature.setMinTemperature(5);
+        temperature.setTemperature(10);
+        when(service.get("Moscow", "ru")).thenReturn(temperature);
+        String temperatureEndPoint = TEMPERATURE_PATH + "/?city=Moscow&country=ru";
+        mvc.perform(get(temperatureEndPoint))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.minimumExpectedTemperature").value("5"))
+                .andExpect(jsonPath("$.temperature").value("10"));
+    }
+
+}
