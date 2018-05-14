@@ -7,8 +7,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class Configurat {
 
+    public Configurat() {
+    }
     
-    
+   
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
