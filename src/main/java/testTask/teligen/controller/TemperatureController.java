@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
 import testTask.teligen.entity.CityTemperatureDto;
@@ -51,8 +50,8 @@ public class TemperatureController {
     }
 
     @DeleteMapping
-    public void deleteTemperature(@RequestParam("city") String city, @RequestParam("day") Date date ){
-        temperatureService.delete(city,date);
+    public void deleteTemperature(@RequestParam("city") String city, @RequestParam("day") long date ){
+        temperatureService.delete(city,new Date(date));
     }
 
     @PutMapping
@@ -67,7 +66,9 @@ public class TemperatureController {
         res.setContentType("text/plain");
         ServletOutputStream outputStream = res.getOutputStream();
         outputStream.print(ex.getClass().getName());
-        if(ex instanceof RecordNotFoundException || ex instanceof RecordDublicateException ){
+        if(ex instanceof RecordNotFoundException){
+            res.sendError(404);
+        } else if(ex instanceof RecordDublicateException ){
             res.sendError(400);
         } else {
             res.sendError(500);
