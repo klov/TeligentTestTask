@@ -1,4 +1,4 @@
-package com.mytest.teligen.main;
+package testTask.teligen.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @EnableAutoConfiguration
-@ComponentScan(basePackages = "com.mytest")
+@ComponentScan(basePackages = "testTask")
 @SpringBootApplication
 public class Main {
 

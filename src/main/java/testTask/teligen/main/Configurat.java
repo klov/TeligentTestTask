@@ -1,4 +1,4 @@
-package com.mytest.teligen.main;
+package testTask.teligen.main;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
